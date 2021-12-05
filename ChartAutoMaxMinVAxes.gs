@@ -30,9 +30,9 @@ function onEdit(e) {
 
     if (values.length) {
         max = Math.max(...values);
-        max += max * buffer;
+        max += Math.abs(max) * buffer;
         min = Math.min(...values);
-        min -= min * buffer;
+        min -= Math.abs(min) * buffer;
 
         var chart = sheet.getCharts()[0];
 
