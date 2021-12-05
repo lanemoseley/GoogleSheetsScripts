@@ -12,31 +12,28 @@
 
 // Trigger function to automatically adjust chart vertical axes for a set of sheets.
 function onEdit(e) {
-    var sheet = e.source.getActiveSheet();
-    var min = null;
-    var max = null;
     var buffer = 0.25; // buffer for max/min values
+    var max = null;
+    var min = null;
+    var sheet = e.source.getActiveSheet();
+    var values = [];
 
     if (sheet.getName() == "Value By Category" || sheet.getName() == "Value By Item") {
         // max/min are max/min values from columns G and J
-        var values = sheet.getRange("G:G").getValues().filter(Number);
+        values = sheet.getRange("G:G").getValues().filter(Number);
         values = values.concat(sheet.getRange("J:J").getValues().filter(Number));
+    } else if (sheet.getName() == "Total Value") {
+        // max/min are max/min values from columns B and D
+        values = sheet.getRange("B:B").getValues().filter(Number);
+        values = values.concat(sheet.getRange("D:D").getValues().filter(Number));
+    }
+
+    if (values.length) {
         max = Math.max(...values);
         max += max * buffer;
         min = Math.min(...values);
         min -= min * buffer;
-    } else if (sheet.getName() == "Total Value") {
-        // max is max value from column B
-        var maxValues = sheet.getRange("B:B").getValues().filter(Number);
-        max = Math.max(...maxValues);
-        max += max * buffer;
-        // min is min value from column D
-        var minValues = sheet.getRange("D:D").getValues().filter(Number);
-        min = Math.min(...minValues);
-        min -= min * buffer;
-    }
 
-    if (min != null && max != null) {
         var chart = sheet.getCharts()[0];
 
         chart = chart.modify()
